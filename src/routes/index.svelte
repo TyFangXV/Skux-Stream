@@ -1,20 +1,22 @@
 <script>
   import {onMount} from 'svelte'
+  import {fade, fly} from 'svelte/transition'
 	let text = [
-		{ text: 'style', id: 1, Image : "/images/lady-vibbin.svg"},
-		{ text: 'Anywhere', id: 2, Image : "/images/lady-sitting-near-window.svg"},
-		{ text: 'no limitation', id: 3, Image : "/images/big-phone.svg"}
+		{ text: 'style', id: 1, Image : "/images/lady-vibbin.svg", x:-200, y:0},
+		{ text: 'Anywhere', id: 2, Image : "/images/lady-sitting-near-window.svg", y:200, x:0},
+		{ text: 'no limitation', id: 3, Image : "/images/big-phone.svg", x:200, y:0}
 	];
   let startingValue = 0;
-   
+  let visible = true; 
   onMount(async()=>{
     setInterval(() => {
       startingValue++;
+      visible = !visible;
       if(startingValue === 3)
        {
         startingValue = 0;
        }
-    }, 1000);
+    }, 500);
   })
 
 
@@ -29,10 +31,13 @@
 		</ul>
 	</nav>
 	<p class="heading">Enjoy your music with</p>
-  <span class="intros">
-    <h1 id={text[startingValue].id}>{text[startingValue].text}</h1>
-    <img src={text[startingValue].Image} alt="img" />    
-  </span>
+  {#if visible}
+    <span class="intros">
+      <h1 in:fly="{{y: text[startingValue].y,x: text[startingValue].x, duration: 1000 }}" out:fade id={text[startingValue].id}>{text[startingValue].text}</h1>
+      <img src={text[startingValue].Image} alt="img" in:fly="{{y: -text[startingValue].y,x: -text[startingValue].x, duration: 1000 }}" out:fade/>    
+    </span>    
+  {/if}
+
 </div>
 
 <style>

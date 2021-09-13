@@ -1,30 +1,48 @@
 <script>
 	import { onMount } from 'svelte';
-	export let albums;
+	export let _albums;
 	export let title;
+	 let Album = [];
 	 let transitionSpeed = 350;
-	 let albumTransitionOpacity = 1;
 
 
-  const back = ()=>{
-        const transitioningAlbumn = albums[albums.length - 1]
-        document.getElementById(transitioningAlbumn.id).style.opacity = 0;
-        albums = [albums[albums.length -1],...albums.slice(0, albums.length - 1)]
-        setTimeout(() => {document.getElementById(transitioningAlbumn.id).style.opacity = albumTransitionOpacity}, transitionSpeed);
-    }
-    const next = ()=>{
-        const transitioningAlbumn = albums[0]
-        document.getElementById(transitioningAlbumn.id).style.opacity = 0;
-        albums = [...albums.slice(1, albums.length), albums[0]]
-        setTimeout(() => {document.getElementById(transitioningAlbumn.id).style.opacity = albumTransitionOpacity}, transitionSpeed)
-    }
+
+	 _albums.forEach((album) => {
+		let newAlbum = Object.assign({}, album, { visible: true });
+		Album.push(newAlbum);
+	});
+
+	const back = () => {
+		const transitioningAlbum = Album[Album.length - 1];
+		Album = [
+			Album[Album.length - 1],
+			...Album.slice(0, Album.length - 1)
+		];
+		setTimeout(() => {
+			let AlbumToBeRemoved = Album.find(
+				album => album.id === transitioningAlbum.id
+			);
+			AlbumToBeRemoved.visible = !AlbumToBeRemoved.visible;
+			setTimeout(() => (AlbumToBeRemoved.visible = !AlbumToBeRemoved.visible)), 50;
+		}, transitionSpeed);
+	};
+	const next = () => {
+		const transitioningAlbum = Album[0];
+		Album = [...Album.slice(1, Album.length), Album[0]];
+		setTimeout(() => {
+			let AlbumToBeRemoved = Album.find(
+				album => album.id === transitioningAlbum.id
+			);
+			AlbumToBeRemoved.visible = true;
+		}, transitionSpeed);
+	};
 </script>
 
 <div class="album-bar">
 	<!--headline-->
 	<h1 class="album-name">{title}</h1>
 	<div class="album-bar-view">
-		{#each albums as album}
+		{#each Album as album}
 			<div class="album">
 				<!--album overlay-->
 				<div class="album-thumbnail-overlay">

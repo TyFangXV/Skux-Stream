@@ -1,52 +1,76 @@
 <script>
-    import { flip } from 'svelte/animate'
+	import { fade, fly } from 'svelte/transition';
 	export let title;
-	export let playlistSource;
-	 let playlistTransitionSpeed = 350;
-     let playlisyTransitionOpacity = 2;
+	export let _playlistSource;
+	let playlistSource = [];
+	let playlistTransitionSpeed = 100;
+	let playlisyTransitionOpacity = 2;
 
-    const back = ()=>{
-        const transitioningPlaylist = playlistSource[playlistSource.length - 1]
-        document.getElementById(transitioningPlaylist.id).style.opacity = 0;
-        playlistSource = [playlistSource[playlistSource.length -1],...playlistSource.slice(0, playlistSource.length - 1)]
-        setTimeout(() => {document.getElementById(transitioningPlaylist.id).style.opacity = playlisyTransitionOpacity}, playlistTransitionSpeed);
-    }
-    const next = ()=>{
-        const transitioningPlaylist = playlistSource[0]
-        document.getElementById(transitioningPlaylist.id).style.opacity = 0;
-        playlistSource = [...playlistSource.slice(1, playlistSource.length), playlistSource[0]]
-        setTimeout(() => {document.getElementById(transitioningPlaylist.id).style.opacity = playlisyTransitionOpacity}, playlistTransitionSpeed)
-    }
+	_playlistSource.forEach((playlist) => {
+		let newPlaylist = Object.assign({}, playlist, { visible: true });
+		playlistSource.push(newPlaylist);
+	});
+
+	const back = () => {
+		const transitioningPlaylist = playlistSource[playlistSource.length - 1];
+		playlistSource = [
+			playlistSource[playlistSource.length - 1],
+			...playlistSource.slice(0, playlistSource.length - 1)
+		];
+		setTimeout(() => {
+			let playlistToBeRemoved = playlistSource.find(
+				(playlist) => playlist.id === transitioningPlaylist.id
+			);
+			playlistToBeRemoved.visible = !playlistToBeRemoved.visible;
+			setTimeout(() => (playlistToBeRemoved.visible = !playlistToBeRemoved.visible)), 50;
+			console.log(playlistToBeRemoved);
+		}, playlistTransitionSpeed);
+	};
+	const next = () => {
+		const transitioningPlaylist = playlistSource[0];
+		playlistSource = [...playlistSource.slice(1, playlistSource.length), playlistSource[0]];
+		setTimeout(() => {
+			let playlistToBeRemoved = playlistSource.find(
+				(playlist) => playlist.id === transitioningPlaylist.id
+			);
+			playlistToBeRemoved.visible = true;
+		}, playlistTransitionSpeed);
+	};
 </script>
 
 <div class="playlist-bar">
-    <!--playlist name-->
+	<!--playlist name-->
 	<h1 class="playlist-title">{title}</h1>
-    <!--playlist carousel-->
+	<!--playlist carousel-->
 	<center>
-	<div class="playlist-carousel-view">
-        {#each playlistSource as playlist, index(playlist)}
-        <div class="playlist" id={playlist.id}>
-            <div class="playlist-thumbnail-overlay">
-                <span class="material-icons">play_arrow</span>
-            </div>
-            <img src={playlist.image} alt="view" class="playlist-thumbnail" />
-            <span class="playlist-meta">
-                <h1 class="playlist-name">{playlist.name}</h1>
-                <span class="material-icons">more_vert</span>
-            </span>
-        </div>
-		{/each}
-        <span class="material-icons playlist-carousel-control-back" on:click={back}>navigate_before</span>
-        <span class="material-icons playlist-carousel-control-next" on:click={next}>navigate_next</span>
-	</div>		
+		<div class="playlist-carousel-view">
+			{#each playlistSource as playlist}
+				{#if playlist.visible}
+					<div class="playlist" id={playlist.id}>
+						<div class="playlist-thumbnail-overlay">
+							<span class="material-icons">play_arrow</span>
+						</div>
+						<img src={playlist.image} alt="view" class="playlist-thumbnail"/>
+						<span class="playlist-meta">
+							<h1 class="playlist-name">{playlist.name}</h1>
+							<span class="material-icons">more_vert</span>
+						</span>
+					</div>
+				{/if}
+			{/each}
+			<span class="material-icons playlist-carousel-control-back" on:click={back}
+				>navigate_before</span
+			>
+			<span class="material-icons playlist-carousel-control-next" on:click={next}
+				>navigate_next</span
+			>
+		</div>
 	</center>
-
 </div>
 
 <style>
 	:root {
-		--playlist-width:250px;
+		--playlist-width: 250px;
 		--playlist-height: 250px;
 	}
 
@@ -67,33 +91,31 @@
 		flex-direction: row;
 	}
 
-    .playlist-bar .playlist-carousel-view .playlist-carousel-control-back{
-        position: absolute;
-        margin-top: 5%;
+	.playlist-bar .playlist-carousel-view .playlist-carousel-control-back {
+		position: absolute;
+		margin-top: 5%;
 		left: 0;
 		padding: 10px;
 		background-color: whitesmoke;
 		border-radius: 50%;
-		-webkit-user-select: none; /* Safari */        
+		-webkit-user-select: none; /* Safari */
 		-moz-user-select: none; /* Firefox */
 		-ms-user-select: none; /* IE10+/Edge */
 		user-select: none; /* Standard */
-    }
+	}
 
-	.playlist-bar .playlist-carousel-view .playlist-carousel-control-next{
-        position: absolute;
-        margin-top: 5%;
-		right: 0;	
+	.playlist-bar .playlist-carousel-view .playlist-carousel-control-next {
+		position: absolute;
+		margin-top: 5%;
+		right: 0;
 		padding: 10px;
 		background-color: whitesmoke;
 		border-radius: 50%;
-		-webkit-user-select: none; /* Safari */        
+		-webkit-user-select: none; /* Safari */
 		-moz-user-select: none; /* Firefox */
 		-ms-user-select: none; /* IE10+/Edge */
 		user-select: none; /* Standard */
-    }
-
-
+	}
 
 	.playlist-bar .playlist-carousel-view .playlist {
 		padding-right: 25px;
@@ -104,7 +126,7 @@
 
 	.playlist-bar .playlist-carousel-view .playlist .playlist-thumbnail {
 		object-fit: cover;
-		-webkit-user-select: none; /* Safari */        
+		-webkit-user-select: none; /* Safari */
 		-moz-user-select: none; /* Firefox */
 		-ms-user-select: none; /* IE10+/Edge */
 		user-select: none; /* Standard */
@@ -114,7 +136,7 @@
 	}
 
 	.playlist-bar .playlist-thumbnail-overlay {
-		-webkit-user-select: none; /* Safari */        
+		-webkit-user-select: none; /* Safari */
 		-moz-user-select: none; /* Firefox */
 		-ms-user-select: none; /* IE10+/Edge */
 		user-select: none; /* Standard */

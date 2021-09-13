@@ -265,9 +265,8 @@ const SongSources = [
 	<div id>
 		<Border>
 			<Nav/>
-			<PlaylistBar title="Recommended playlist" playlistSource={playlistSources} />
-			<AlbumBar title="Albums" albums={albumSource} />
-			<PlaylistBar title="Recommended playlist" playlistSource={playlistSources} />	
+			<PlaylistBar title="Recommended playlist" _playlistSource={playlistSources} />
+			<AlbumBar title="Albums" _albums={albumSource} />	
 		</Border>				
 	</div>
 
