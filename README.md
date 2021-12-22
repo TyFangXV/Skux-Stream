@@ -1,6 +1,6 @@
 
 
-
+# project is no longer maintained and all the assets used in the  project may not work
 
 # create-svelte
 
