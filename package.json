@@ -20,7 +20,7 @@
   },
   "type": "module",
   "dependencies": {
-    "@cloudant/cloudant": "^4.5.0",
+    "@cloudant/cloudant": "^4.5.1",
     "@supabase/supabase-js": "^1.22.5",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
